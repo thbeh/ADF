@@ -1,0 +1,111 @@
+{
+	"name": "ODV_Reporting",
+	"properties": {
+		"activities": [
+			{
+				"name": "ODV_Reporting_tables",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('Tables')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 1,
+					"activities": [
+						{
+							"name": "odv_reporting_loop",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlMISource"
+								},
+								"sink": {
+									"type": "SqlMISink",
+									"preCopyScript": {
+										"value": "DROP TABLE IF EXISTS @{variables('Schema')}.@{item()}",
+										"type": "Expression"
+									},
+									"tableOption": "autoCreate"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "AzureSqlMILandingZone",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"Database": {
+											"value": "@variables('Database')",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "@variables('Schema')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSqlMI_Assurance",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"Database": {
+											"value": "@variables('Database')",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "@variables('Schema')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"Database": {
+				"type": "String",
+				"defaultValue": "ODV_Reporting"
+			},
+			"Tables": {
+				"type": "Array",
+				"defaultValue": [
+					"Claim__General",
+					"Exposure__General",
+					"CompleteClaimset__General",
+					"Claim__General_CMS8"
+				]
+			},
+			"Schema": {
+				"type": "String",
+				"defaultValue": "flat"
+			}
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

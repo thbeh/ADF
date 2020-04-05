@@ -1,0 +1,127 @@
+{
+	"name": "EQCSAPB1",
+	"properties": {
+		"activities": [
+			{
+				"name": "EQCSAPB1_tables",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('Tables')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 1,
+					"activities": [
+						{
+							"name": "eqcsapb1_tables_loop",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlMISource"
+								},
+								"sink": {
+									"type": "SqlMISink",
+									"preCopyScript": {
+										"value": "DROP TABLE IF EXISTS @{variables('Schema')}.@{item()}",
+										"type": "Expression"
+									},
+									"tableOption": "autoCreate"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "AzureSqlMILandingZone",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"Database": {
+											"value": "@variables('Database')",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "@variables('Schema')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSqlMI_Assurance",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"Database": {
+											"value": "@variables('Database')",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "@variables('Schema')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"Database": {
+				"type": "String",
+				"defaultValue": "EQCSAPB1"
+			},
+			"Tables": {
+				"type": "Array",
+				"defaultValue": [
+					"OVPM",
+					"VPM2",
+					"OPCH",
+					"PCH1",
+					"OCRD",
+					"OCRB",
+					"OOCR",
+					"OACT",
+					"OASC",
+					"OCRG",
+					"ORPC",
+					"RPC1",
+					"OSLP",
+					"OINV",
+					"ORIN",
+					"RIN1",
+					"INV1",
+					"OJDT",
+					"JDT1",
+					"OFPR"
+				]
+			},
+			"Schema": {
+				"type": "String",
+				"defaultValue": "dbo"
+			}
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

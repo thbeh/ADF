@@ -1,0 +1,109 @@
+{
+	"name": "KEQ_Processing",
+	"properties": {
+		"activities": [
+			{
+				"name": "KEQ_Processing_tables",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('Tables')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 1,
+					"activities": [
+						{
+							"name": "keq_tables_loop",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlMISource"
+								},
+								"sink": {
+									"type": "SqlMISink",
+									"preCopyScript": {
+										"value": "DROP TABLE IF EXISTS @{variables('Schema')}.@{item()}",
+										"type": "Expression"
+									},
+									"tableOption": "autoCreate"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "AzureSqlMILandingZone",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"Database": {
+											"value": "@variables('Database')",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "@variables('Schema')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSqlMI_Assurance",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"Database": {
+											"value": "@variables('Database')",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "@variables('Schema')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"Database": {
+				"type": "String",
+				"defaultValue": "KEQ_Processing"
+			},
+			"Tables": {
+				"type": "Array",
+				"defaultValue": [
+					"EQC_Claim_Exposures",
+					"EQC_Claim_Exposures_History"
+				]
+			},
+			"Schema": {
+				"type": "String",
+				"defaultValue": "dbo"
+			}
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

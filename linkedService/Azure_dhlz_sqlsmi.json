@@ -1,0 +1,21 @@
+{
+	"name": "Azure_dhlz_sqlsmi",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"database": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlMI",
+		"typeProperties": {
+			"connectionString": "integrated security=False;encrypt=True;connection timeout=30;data source=ina-tst-dhlz-sqlsmi.15bd0066d975.database.windows.net;initial catalog=@{linkedService().database};user id=dhlzsqlsmiuser",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhNTQ3MWMzYi1lMzYxLTQyMzctODdhMy1mOTAyZWExZWI1YmYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "ina-test01-dnaa-ir",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

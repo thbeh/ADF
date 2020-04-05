@@ -1,0 +1,109 @@
+{
+	"name": "ODV_BV_hub",
+	"properties": {
+		"activities": [
+			{
+				"name": "ODV_hub_tables_loop",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('Tables')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 1,
+					"activities": [
+						{
+							"name": "odv_hub_tables",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlMISource"
+								},
+								"sink": {
+									"type": "SqlMISink",
+									"preCopyScript": {
+										"value": "DROP TABLE IF EXISTS @{variables('Schema')}.@{item()}\n",
+										"type": "Expression"
+									},
+									"tableOption": "autoCreate"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "AzureSqlMILandingZone",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"Database": {
+											"value": "@variables('Database')",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "@variables('Schema')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSqlMI_Assurance",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"Database": {
+											"value": "@variables('Database')",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "@variables('Schema')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"Database": {
+				"type": "String",
+				"defaultValue": "ODV_Business_Vault"
+			},
+			"Tables": {
+				"type": "Array",
+				"defaultValue": [
+					"h_Exposure",
+					"h_Claim"
+				]
+			},
+			"Schema": {
+				"type": "String",
+				"defaultValue": "hub"
+			}
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

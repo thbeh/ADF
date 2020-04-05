@@ -1,0 +1,21 @@
+{
+	"name": "Azure_dnaa_sqlsmi",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"database": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlMI",
+		"typeProperties": {
+			"connectionString": "integrated security=False;encrypt=True;connection timeout=30;data source=ina-tst-dnaa-sqlsmi.e204540475b4.database.windows.net;initial catalog=@{linkedService().database};user id=dnaasqlsmiuser",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI1NWFiYWMwZC1kMjYxLTQxY2ItOGYwMC03NjA0OGMyNTNhYWQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "ina-test01-dnaa-ir",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

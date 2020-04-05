@@ -1,0 +1,157 @@
+{
+	"name": "ManualDB",
+	"properties": {
+		"activities": [
+			{
+				"name": "Kaikoura_files",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "CC_NOTE_BODY",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('Tables')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 1,
+					"activities": [
+						{
+							"name": "Kaikoura",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlMISource"
+								},
+								"sink": {
+									"type": "SqlMISink",
+									"tableOption": "autoCreate"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "AzureSqlMILandingZone",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"Database": {
+											"value": "@variables('Database')",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "@variables('Schema')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSqlMI_Assurance",
+									"type": "DatasetReference",
+									"parameters": {
+										"TableName": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"Database": {
+											"value": "@variables('Database')",
+											"type": "Expression"
+										},
+										"Schema": {
+											"value": "@variables('Schema')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "CC_NOTE_BODY",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlMISource"
+					},
+					"sink": {
+						"type": "SqlMISink",
+						"tableOption": "autoCreate"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "AzureSqlMILandingZone",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "CC_NOTE_BODY",
+							"Database": "Manual",
+							"Schema": "dbo"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzureSqlMI_Assurance",
+						"type": "DatasetReference",
+						"parameters": {
+							"TableName": "CC_NOTE_BODY",
+							"Database": "Manual",
+							"Schema": "dbo"
+						}
+					}
+				]
+			}
+		],
+		"variables": {
+			"Database": {
+				"type": "String",
+				"defaultValue": "Manual"
+			},
+			"Tables": {
+				"type": "Array",
+				"defaultValue": [
+					"MOUInsurerLatestExtract",
+					"MOUInsurerClaimLodgementInbound"
+				]
+			},
+			"Schema": {
+				"type": "String",
+				"defaultValue": "kai"
+			}
+		},
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

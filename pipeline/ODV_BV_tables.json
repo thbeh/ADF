@@ -1,0 +1,62 @@
+{
+	"name": "ODV_BV_tables",
+	"properties": {
+		"activities": [
+			{
+				"name": "copy ODV_BV_hub",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ODV_BV_hub",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "copy ODV_BV_link",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "copy ODV_BV_hub",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ODV_BV_link",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "copy ODV_BV_sat",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "copy ODV_BV_link",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ODV_BV_sat",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": []
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
